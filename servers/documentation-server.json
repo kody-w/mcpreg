@@ -1,0 +1,41 @@
+{
+"id": "docs-server-001",
+"name": "Documentation Server",
+"url": "https://docs.example.com/mcp",
+"description": "Interactive documentation with search and component discovery",
+"category": "Documentation",
+"version": "1.0",
+"transport": "stdio",
+"tools": [
+{
+"name": "search_docs",
+"description": "Search through documentation",
+"parameters": {
+"query": "string",
+"category": "string?",
+"limit": "number?"
+}
+},
+{
+"name": "get_page",
+"description": "Retrieve a specific documentation page",
+"parameters": {
+"path": "string",
+"format": "string?"
+}
+},
+{
+"name": "list_components",
+"description": "List all available components",
+"parameters": {
+"filter": "string?"
+}
+}
+],
+"metadata": {
+"author": "Example Corp",
+"license": "MIT",
+"homepage": "https://example.com",
+"tags": ["documentation", "search", "components"]
+}
+}

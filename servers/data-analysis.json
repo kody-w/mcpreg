@@ -1,0 +1,44 @@
+{
+"id": "data-analysis-001",
+"name": "Data Analysis Server",
+"url": "https://analytics.example.com/mcp",
+"description": "Perform data analysis, visualization, and statistical computations",
+"category": "Analytics",
+"version": "1.0",
+"transport": "stdio",
+"tools": [
+{
+"name": "analyze_csv",
+"description": "Analyze CSV data and provide insights",
+"parameters": {
+"file_path": "string",
+"analysis_type": "string",
+"columns": "string[]?"
+}
+},
+{
+"name": "create_visualization",
+"description": "Create data visualizations",
+"parameters": {
+"data": "object",
+"chart_type": "string",
+"options": "object?"
+}
+},
+{
+"name": "statistical_test",
+"description": "Perform statistical tests on data",
+"parameters": {
+"test_type": "string",
+"data_sets": "array",
+"confidence_level": "number?"
+}
+}
+],
+"metadata": {
+"author": "DataViz Corp",
+"license": "Apache-2.0",
+"homepage": "https://dataviz.example.com",
+"tags": ["analytics", "visualization", "statistics", "data"]
+}
+}

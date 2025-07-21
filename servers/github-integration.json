@@ -1,0 +1,56 @@
+{
+"id": "github-mcp-001",
+"name": "GitHub Integration",
+"url": "github://mcp/api",
+"description": "Access GitHub repositories, issues, pull requests, and actions",
+"category": "Development",
+"version": "1.0",
+"transport": "stdio",
+"tools": [
+{
+"name": "search_code",
+"description": "Search code across repositories",
+"parameters": {
+"query": "string",
+"language": "string?",
+"repo": "string?",
+"user": "string?"
+}
+},
+{
+"name": "list_issues",
+"description": "List repository issues",
+"parameters": {
+"repo": "string",
+"state": "string?",
+"labels": "string[]?",
+"assignee": "string?"
+}
+},
+{
+"name": "create_issue",
+"description": "Create a new GitHub issue",
+"parameters": {
+"repo": "string",
+"title": "string",
+"body": "string",
+"labels": "string[]?",
+"assignees": "string[]?"
+}
+},
+{
+"name": "get_pull_request",
+"description": "Get details of a pull request",
+"parameters": {
+"repo": "string",
+"pr_number": "number"
+}
+}
+],
+"metadata": {
+"author": "GitHub Tools Inc",
+"license": "MIT",
+"homepage": "https://github.com",
+"tags": ["github", "development", "vcs", "collaboration"]
+}
+}

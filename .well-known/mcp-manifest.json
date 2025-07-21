@@ -1,0 +1,14 @@
+{
+"version": "2.0",
+"name": "MCP Registry",
+"description": "Universal discovery registry for Model Context Protocol servers",
+"registry_endpoint": "/api/mcp-registry.json",
+"documentation": "https://github.com/kody-w/mcpreg",
+"supported_features": [
+"server_discovery",
+"tool_search",
+"category_filtering",
+"version_tracking",
+"metadata_storage"
+]
+}

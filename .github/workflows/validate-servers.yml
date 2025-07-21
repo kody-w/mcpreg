@@ -1,0 +1,45 @@
+name: Validate MCP Servers
+on:
+push:
+paths:
+- 'servers/.json'
+- 'registry.json'
+pull_request:
+paths:
+- 'servers/.json'
+- 'registry.json'
+jobs:
+validate:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v3
+  - name: Validate JSON files
+    run: |
+      echo "Validating server JSON files..."
+      for file in servers/*.json; do
+        if [ -f "$file" ]; then
+          echo "Checking $file"
+          jq empty "$file" || exit 1
+          echo "✓ $file is valid JSON"
+        fi
+      done
+      
+      if [ -f "registry.json" ]; then
+        echo "Checking registry.json"
+        jq empty "registry.json" || exit 1
+        echo "✓ registry.json is valid JSON"
+      fi
+      
+  - name: Check required fields
+    run: |
+      echo "Checking required fields in server files..."
+      for file in servers/*.json; do
+        if [ -f "$file" ]; then
+          echo "Checking $file"
+          jq -e '.id and .name and .url and .description and .category and .tools' "$file" > /dev/null || {
+            echo "❌ $file is missing required fields"
+            exit 1
+          }
+          echo "✓ $file has all required fields"
+        fi
+      done
