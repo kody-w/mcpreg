@@ -620,6 +620,9 @@
                 </svg>
                 <input type="text" id="searchInput" placeholder="Search servers, tools, or capabilities...">
             </div>
+            <button id="toggleServersBtn" class="btn-secondary" onclick="browser.toggleServerView()" style="display: none;">
+                Show All Servers
+            </button>
         </div>
         
         <!-- Category Filters -->
@@ -656,6 +659,7 @@
                 this.activeCategory = 'all';
                 this.searchQuery = '';
                 this.activeConnections = new Map();
+                this.showAllServers = false; // Toggle for local testing
                 
                 // DOM elements
                 this.loadingOverlay = document.getElementById('loadingOverlay');
@@ -670,6 +674,17 @@
             
             async init() {
                 try {
+                    // Check if running locally
+                    const isLocal = window.location.protocol === 'file:' || 
+                                   window.location.hostname === 'localhost' || 
+                                   window.location.hostname === '127.0.0.1';
+                    
+                    if (isLocal) {
+                        // Show toggle button for local testing
+                        document.getElementById('toggleServersBtn').style.display = 'block';
+                        this.showAllServers = true; // Show all servers when local
+                    }
+                    
                     // Fetch registry data
                     await this.fetchRegistryData();
                     
@@ -692,8 +707,31 @@
                 }
             }
             
+            toggleServerView() {
+                this.showAllServers = !this.showAllServers;
+                const btn = document.getElementById('toggleServersBtn');
+                btn.textContent = this.showAllServers ? 'Show Remote Only' : 'Show All Servers';
+                this.filterServers();
+                this.updateDisplay();
+            }
+            
             async fetchRegistryData() {
                 try {
+                    // Check if running locally by looking at the URL
+                    const isLocal = window.location.protocol === 'file:' || 
+                                   window.location.hostname === 'localhost' || 
+                                   window.location.hostname === '127.0.0.1';
+                    
+                    if (isLocal) {
+                        // Try to load local server files
+                        console.log('Running locally, attempting to load local server files...');
+                        await this.loadLocalServerFiles();
+                        if (this.servers.length > 0) {
+                            return;
+                        }
+                    }
+                    
+                    // Try to fetch from GitHub
                     const response = await fetch(this.REGISTRY_URL);
                     
                     if (response.ok) {
@@ -709,6 +747,34 @@
                 } catch (error) {
                     console.error('Error fetching registry:', error);
                     this.loadDefaultServers();
+                }
+            }
+            
+            async loadLocalServerFiles() {
+                // List of server files in your servers directory
+                const serverFiles = [
+                    'mcp-jokes-server.json',
+                    'data-analysis.json',
+                    'github-integration.json',
+                    'documentation-server.json'
+                ];
+                
+                for (const filename of serverFiles) {
+                    try {
+                        const response = await fetch(`servers/${filename}`);
+                        if (response.ok) {
+                            const serverData = await response.json();
+                            // For local testing, include all servers, not just remote
+                            this.servers.push(serverData);
+                            console.log(`Loaded ${filename}`);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load ${filename}:`, error);
+                    }
+                }
+                
+                if (this.servers.length > 0) {
+                    this.processServers();
                 }
             }
             
@@ -806,7 +872,14 @@
             }
             
             filterServers() {
-                this.filteredServers = this.servers.filter(server => {
+                let servers = this.servers;
+                
+                // Filter by type if not showing all
+                if (!this.showAllServers) {
+                    servers = servers.filter(s => s.type === 'remote' || s.transport !== 'stdio');
+                }
+                
+                this.filteredServers = servers.filter(server => {
                     // Category filter
                     if (this.activeCategory !== 'all' && server.category !== this.activeCategory) {
                         return false;
@@ -839,10 +912,21 @@
             }
             
             updateStats() {
-                document.getElementById('totalServers').textContent = this.servers.length;
+                // Count based on what's being shown
+                const remoteServers = this.servers.filter(s => s.type === 'remote' || s.transport !== 'stdio');
+                const localServers = this.servers.filter(s => s.type !== 'remote' && s.transport === 'stdio');
+                
+                document.getElementById('totalServers').textContent = 
+                    this.showAllServers ? this.servers.length : remoteServers.length;
                 document.getElementById('totalTools').textContent = 
                     this.servers.reduce((acc, s) => acc + (s.tools?.length || 0), 0);
                 document.getElementById('activeConnections').textContent = this.activeConnections.size;
+                
+                // Update label based on mode
+                const serverLabel = document.querySelector('#totalServers').nextElementSibling;
+                if (serverLabel) {
+                    serverLabel.textContent = this.showAllServers ? 'Total Servers' : 'Remote Servers';
+                }
                 
                 // Format last updated
                 const date = new Date();
@@ -910,6 +994,7 @@
                             ${server.tools.map(tool => this.createToolDetail(tool)).join('')}
                             
                             <!-- Test Section for Remote Servers -->
+                            ${server.type === 'remote' || server.transport !== 'stdio' ? `
                             <div class="test-section">
                                 <div class="test-header">🧪 Test Server Connection</div>
                                 <div class="test-status">
@@ -937,6 +1022,15 @@
                                     <div style="color: #8b949e;">Connection output will appear here...</div>
                                 </div>
                             </div>
+                            ` : `
+                            <div class="test-section" style="background: rgba(48, 54, 61, 0.3); border-color: #30363d;">
+                                <div class="test-header" style="color: #8b949e;">📦 Local Server</div>
+                                <div style="color: #8b949e; font-size: 0.9em;">
+                                    This is a local server that runs on your machine using stdio transport.
+                                    <br>Install with: <code style="background: #0d1117; padding: 2px 6px; border-radius: 4px;">${server.url}</code>
+                                </div>
+                            </div>
+                            `}
                         </div>
                     </div>
                 `;
