@@ -1,5 +1,74 @@
 {
-"version": "2.0",
-"lastUpdated": "2024-01-20T12:00:00Z",
-"servers": []
+  "version": "2.0",
+  "lastUpdated": "2025-07-21T13:16:52.585388",
+  "servers": [
+    {
+      "id": "mcp-jokes-server-001",
+      "name": "Jokes SSE Server",
+      "url": "https://mcpwebappkjw-fehvd9e7esbmdfc0.eastus2-01.azurewebsites.net",
+      "description": "A server that provides various types of jokes including Chuck Norris, Dad jokes, and Yo Mama jokes via Server-Sent Events",
+      "category": "Entertainment",
+      "version": "1.0.0",
+      "transport": "sse",
+      "type": "remote",
+      "endpoints": {
+        "base": "https://mcpwebappkjw-fehvd9e7esbmdfc0.eastus2-01.azurewebsites.net",
+        "sse": "/sse",
+        "messages": "/jokes"
+      },
+      "tools": [
+        {
+          "name": "get-chuck-joke",
+          "description": "Get a random Chuck Norris joke",
+          "parameters": {}
+        },
+        {
+          "name": "get-chuck-categories",
+          "description": "Get all available categories for Chuck Norris jokes",
+          "parameters": {}
+        },
+        {
+          "name": "get-dad-joke",
+          "description": "Get a random dad joke",
+          "parameters": {}
+        },
+        {
+          "name": "get-yo-mama-joke",
+          "description": "Get a random Yo Mama joke",
+          "parameters": {}
+        }
+      ],
+      "connectionInfo": {
+        "protocol": "Server-Sent Events (SSE)",
+        "authentication": "None",
+        "sessionManagement": "Automatic via SSE transport",
+        "instructions": [
+          "1. Connect to SSE endpoint: /sse",
+          "2. Server responds with session URL in format: /jokes?sessionId={uuid}",
+          "3. Send POST requests to the session URL for tool execution"
+        ]
+      },
+      "exampleUsage": {
+        "connect": "GET https://mcpwebappkjw-fehvd9e7esbmdfc0.eastus2-01.azurewebsites.net/sse",
+        "response": "event: endpoint\\ndata: https://mcpwebappkjw-fehvd9e7esbmdfc0.eastus2-01.azurewebsites.net/jokes?sessionId=ae455340-1bf7-491e-b87f-f9594149f14c",
+        "toolCall": "POST to the session URL with MCP protocol messages"
+      },
+      "metadata": {
+        "author": "MCP Community",
+        "hosting": "Azure Web Apps",
+        "region": "East US 2",
+        "status": "active",
+        "public": true,
+        "sourceCode": "TypeScript + Express",
+        "apiSources": [
+          "api.chucknorris.io",
+          "icanhazdadjoke.com",
+          "yomama-jokes.com"
+        ]
+      }
+    }
+  ],
+  "categories": [
+    "Entertainment"
+  ]
 }
