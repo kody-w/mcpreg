@@ -1,3 +1,7 @@
+<!-- retired-notice:start -->
+> **Archived.** No longer maintained; kept public for reference.
+<!-- retired-notice:end -->
+
 # MCP Registry (mcpreg)
 
 A universal discovery registry for Model Context Protocol (MCP) servers, enabling AI agents and developers to find and integrate MCP-compatible tools.
